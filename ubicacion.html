@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Ubicación en Mapa</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #mapa {
+            height: 400px;
+            width: 90%;
+            margin: 20px auto;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        body {
+            text-align: center;
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mi Ubicación en el Mapa</h1>
+    <button onclick="obtenerUbicacion()">Mostrar ubicación</button>
+    <div id="mapa"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        let mapa;
+
+        function obtenerUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mostrarMapa, mostrarError);
+            } else {
+                alert("La geolocalización no es soportada por este navegador.");
+            }
+        }
+
+        function mostrarMapa(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            if (!mapa) {
+                mapa = L.map('mapa').setView([lat, lon], 15);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(mapa);
+
+                L.marker([lat, lon]).addTo(mapa)
+                    .bindPopup(`Estás aquí:<br>Lat: ${lat}<br>Lon: ${lon}`).openPopup();
+            } else {
+                mapa.setView([lat, lon], 15);
+            }
+        }
+
+        function mostrarError(error) {
+            alert("Error obteniendo la ubicación: " + error.message);
+        }
+    </script>
+</body>
+</html>
